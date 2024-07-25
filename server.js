@@ -14,5 +14,15 @@ jsonfile.readFile(file, function(err, dmca) {
     else
         res.json({dmca: 0})
   })
-  app.listen(port, () => console.log('DMCA server is ready on port '+port))
+  app.use(express.json({limit: '50mb'}));
+  app.post('/feed', (req, res) => {
+    let newFeed = [];
+    for (let feedItem in req.body) {
+      if (dmca.authors.indexOf(req.body[feedItem].author) == -1 && dmca.videos.indexOf(req.body[feedItem]._id) == -1) {
+        newFeed.push(req.body[feedItem]);
+      }
+    }
+    res.json(newFeed);
+  })
+  app.listen(port, '127.0.0.1', () => console.log('DMCA server is ready on port '+port))
 })
